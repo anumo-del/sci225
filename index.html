@@ -96,9 +96,8 @@
 <script>
   // --- CONFIGURACIÓN ---
   const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqY2zuSVQVk0mMSVCYic4P5oVtjrx0S7NRz-IuGkqPZklaHmrDn9s-RSXHWey_-SIC/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyHGtjDezWnyL9JEbpM-u4pvLW1-o318gIwk00ugaG5pYHLrcOC8-mLX5_SyfQ5jOGR/exec";
   
-  // Variable global para guardar el Token de identidad
   let USER_TOKEN = "";
 
   // 1. Inicializar Botón de Google
@@ -117,9 +116,7 @@
 
   // 2. Manejar respuesta de Login
   function handleCredentialResponse(response) {
-    // CAMBIO CRÍTICO: Guardamos el token (response.credential)
     USER_TOKEN = response.credential;
-    
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('appSection').style.display = 'block';
     console.log("Token de seguridad capturado correctamente.");
@@ -134,10 +131,11 @@
 
     if (rut.length < 8) { alert("RUT no válido"); return; }
     
-    // Verificación de seguridad local
+    // --- INCORPORACIÓN DE SUGERENCIA: VALIDACIÓN DE SESIÓN ---
     if (!USER_TOKEN) {
-      alert("Error: Sesión no detectada. Por favor, recarga la página.");
-      location.reload();
+      errorMsg.innerText = "Sesión no detectada o expirada. Por favor, inicie sesión con el botón de Google.";
+      errorMsg.style.display = "block";
+      google.accounts.id.prompt(); // Intenta re-activar el diálogo de Google
       return;
     }
 
@@ -146,7 +144,6 @@
     errorMsg.style.display = "none";
 
     try {
-      // CAMBIO CRÍTICO: Añadimos "&token=" a la URL
       const urlFinal = `${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}`;
       
       const response = await fetch(urlFinal, {
@@ -169,7 +166,6 @@
         elResultado.innerText = data.resultado;
         elResultado.style.color = data.resultado.toLowerCase().includes("aprobado") ? "#27ae60" : "#e74c3c";
 
-        // Generar Matriz
         const factores = ["Conocimiento del Trabajo", "Desempeño", "Actitud", "Bajo Presión", "Iniciativa", "Cuidado Personal", "Uso de Recursos", "Condición Física", "Seguridad", "Otros"];
         const tbody = document.getElementById('tablaMatriz');
         tbody.innerHTML = "";
@@ -190,10 +186,15 @@
       } else {
         errorMsg.innerText = data.mensaje;
         errorMsg.style.display = "block";
+        
+        // Si el servidor detectó sesión expirada, limpiamos el token local
+        if (data.mensaje.includes("EXPIRADA")) {
+            USER_TOKEN = "";
+        }
       }
     } catch (e) {
       loader.style.display = "none";
-      errorMsg.innerText = "Error: No se pudo conectar. Asegúrese de estar usando su cuenta @conaf.cl.";
+      errorMsg.innerText = "Error: No se pudo conectar. Asegúrese de estar logueado en su cuenta @conaf.cl.";
       errorMsg.style.display = "block";
       console.error(e);
     }
