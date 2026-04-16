@@ -96,14 +96,17 @@
 <script>
   // --- CONFIGURACIÓN ---
   const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxSHrJSYDO4jPYX2K3Y3utkpBQqbET4Z9oHgJPeoMGscl65HLlPxS2p1PIyBedXEQQ/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqY2zuSVQVk0mMSVCYic4P5oVtjrx0S7NRz-IuGkqPZklaHmrDn9s-RSXHWey_-SIC/exec";
   
+  // Variable global para guardar el Token de identidad
+  let USER_TOKEN = "";
+
   // 1. Inicializar Botón de Google
   window.onload = function () {
     google.accounts.id.initialize({
       client_id: CLIENT_ID,
       callback: handleCredentialResponse,
-      auto_select: true // Intenta loguear automáticamente si ya inició sesión antes
+      auto_select: true 
     });
     google.accounts.id.renderButton(
       document.getElementById("buttonDiv"),
@@ -114,10 +117,12 @@
 
   // 2. Manejar respuesta de Login
   function handleCredentialResponse(response) {
-    // Si llegamos aquí, el usuario se autenticó correctamente en el navegador
+    // CAMBIO CRÍTICO: Guardamos el token (response.credential)
+    USER_TOKEN = response.credential;
+    
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('appSection').style.display = 'block';
-    console.log("Sesión de Google detectada correctamente.");
+    console.log("Token de seguridad capturado correctamente.");
   }
 
   // 3. Función de Consulta
@@ -128,19 +133,26 @@
     const errorMsg = document.getElementById('errorMsg');
 
     if (rut.length < 8) { alert("RUT no válido"); return; }
+    
+    // Verificación de seguridad local
+    if (!USER_TOKEN) {
+      alert("Error: Sesión no detectada. Por favor, recarga la página.");
+      location.reload();
+      return;
+    }
 
     loader.style.display = "block";
     resultBox.style.display = "none";
     errorMsg.style.display = "none";
 
     try {
-      // El navegador enviará las credenciales de Google automáticamente si están en el mismo perfil
-      const response = await fetch(`${WEB_APP_URL}?rut=${encodeURIComponent(rut)}`, {
-      method: 'GET',
-      // Esto es opcional pero ayuda en algunos navegadores:
-      // credentials: 'omit' // Al ejecutar como "Yo", no necesitamos enviar cookies pesadas
-      mode: 'cors', // Asegura que se permita el acceso cruzado
-      redirect: 'follow'
+      // CAMBIO CRÍTICO: Añadimos "&token=" a la URL
+      const urlFinal = `${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}`;
+      
+      const response = await fetch(urlFinal, {
+        method: 'GET',
+        mode: 'cors',
+        redirect: 'follow'
       });
       
       const data = await response.json();
