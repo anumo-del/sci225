@@ -136,10 +136,12 @@
     try {
       // El navegador enviará las credenciales de Google automáticamente si están en el mismo perfil
       const response = await fetch(`${WEB_APP_URL}?rut=${encodeURIComponent(rut)}`, {
-        method: 'GET',
-        redirect: 'follow'
+      method: 'GET',
+      // Esto es opcional pero ayuda en algunos navegadores:
+      // credentials: 'omit' // Al ejecutar como "Yo", no necesitamos enviar cookies pesadas
+      redirect: 'follow'
       });
-
+      
       const data = await response.json();
       loader.style.display = "none";
 
