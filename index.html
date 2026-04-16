@@ -96,7 +96,7 @@
 <script>
   // --- CONFIGURACIÓN ---
   const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwajoDD0Sb2EglIqaVkonyiXwSCSmu3DGZmT72MUmEZ5_Z74wsiELSLHWrjm7ixygg/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxbHNEq6lMJ7VGNhzWinDx7kVSZXSOnrR62POqstl-PCiZX6hlr-cxjeoJORBceAlYI/exec";
   
   let USER_TOKEN = "";
 
@@ -115,13 +115,19 @@
   };
 
   // 2. Manejar respuesta de Login
-  function handleCredentialResponse(response) {
-    USER_TOKEN = response.credential;
+function handleCredentialResponse(response) {
+  // El token real está en response.credential
+  USER_TOKEN = response.credential;
+  
+  if (USER_TOKEN) {
+    console.log("Token capturado con éxito.");
     document.getElementById('loginSection').style.display = 'none';
     document.getElementById('appSection').style.display = 'block';
-    console.log("Token de seguridad capturado correctamente.");
+  } else {
+    console.error("Error: No se recibió la credencial de Google.");
+    alert("Error al iniciar sesión con Google.");
   }
-
+}
   // 3. Función de Consulta
   async function consultar() {
     const rut = document.getElementById('rutInput').value.trim();
