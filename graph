@@ -1,0 +1,48 @@
+graph TD
+    %% Entidades Principales
+    subgraph Usuario [" Navegador del Usuario (Cliente) "]
+        A[1. Entra a GitHub Pages] -->|Carga HTML/JS| B(2. Ve Botón 'Sign in with Google')
+        B -->|Clic e Inicia Sesión con @conaf.cl| C{3. ¿Login Exitoso?}
+        C -- Sí -->|Recibe 'id_token'| D[4. Guarda Token en Memoria]
+        C -- No --> B
+        D --> E[5. Ingresa RUT y Clic 'Buscar']
+    end
+
+    subgraph GitHub [" Servidores de GitHub "]
+        A_G[Aloja HTML/JS Estático]
+    end
+
+    subgraph Google_Cloud [" Google Cloud Platform (GCP) & Auth "]
+        B_G[A. Configuración OAuth 2.0]
+        B_G -->|Provee CLIENT_ID| B
+        C -->|Valida Credenciales| B_G
+        F_G[B. Servidor de Validación de Tokens]
+    end
+
+    subgraph Google_Apps_Script [" Google Apps Script (Backend) "]
+        E -->|6. Fetch GET con RUT + Token| F(7. Función doGet recibe petición)
+        F_G -->|8. Responde Email Verificado| F
+        F -->|7. Llama a Validación| F_G
+        F -->|9. Capa de Seguridad: ¿Email es @conaf.cl?| G{10. ¿Permitido?}
+    end
+
+    subgraph Google_Sheets [" Base de Datos (Google Sheets) "]
+        G -- Sí -->|11. Consulta RUT| H[(Hoja de Cálculo)]
+        H -->|Devuelve Datos del RUT| G
+    }
+
+    %% Respuestas Finales
+    G -- No -->|12. Retorna JSON 'Acceso Denegado'| I[13. JS Muestra Error en Pantalla]
+    G -- Sí -->|12. Retorna JSON con Datos del Personal| J[13. JS Rellena Tabla de Resultados]
+
+    %% Estilos de Conexiones Clave
+    linkStyle 0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21 stroke-width:1px,fill:none,stroke:black;
+    linkStyle 6 stroke-width:2px,stroke:blue;   %% El viaje del Fetch
+    linkStyle 9 stroke-width:2px,stroke:orange; %% La validación del Token
+    linkStyle 10 stroke-width:2px,stroke:green; %% El filtro de dominio
+
+    %% Estilos de Nodos
+    style Usuario fill:#f9f9f9,stroke:#333,stroke-width:2px;
+    style Google_Apps_Script fill:#e1f5fe,stroke:#0277bd,stroke-width:2px;
+    style Google_Sheets fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px;
+    style G fill:#fff9c4,stroke:#fbc02d,stroke-width:2px; %% El rombo de decisión de seguridad
