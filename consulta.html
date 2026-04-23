@@ -105,7 +105,6 @@
       <div class="data-item"><span class="label">Cargo</span><span id="resCargo" class="value"></span></div>
       <div class="data-item"><span class="label">Brigada</span><span id="resBrigada" class="value"></span></div>
       <div class="data-item"><span class="label">Zona</span><span id="resZona" class="value"></span></div>
-      
       <div class="data-item"><span class="label">Evaluado por: </span><span id="resEvaluador" class="value"></span></div>
       <div class="data-item"><span class="label">Cargo evaluador</span><span id="resCargoEvaluador" class="value"></span></div>
       
@@ -122,6 +121,9 @@
       </div>
 
       <div class="data-item"><span class="label">Observaciones</span><span id="resObservaciones" class="value"></span></div>
+      <div class="data-item">
+      <span class="label">Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente: </span>
+      <span id="resFirmaRRHH" class="value" style="font-style: italic; color: #555;"></span>
       <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR RESULTADO</button>
     </div>
   </div>
@@ -180,6 +182,7 @@
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
         document.getElementById('resObservaciones').innerText = data.observaciones;
+        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH ? "Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente" : "";
         
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
