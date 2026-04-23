@@ -44,15 +44,43 @@
     .only-print { display: none; }
 
     @media print {
-      body { background: white; padding: 0; display: block; }
-      .header-img, h2, #rutInput, button:not(.btn-print), #loader, #errorMsg, hr, #loginSection { display: none !important; }
-      .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
-      .result-box { display: block !important; border: none; padding-top: 0; margin-top: 0; }
-      
-      /* Mostrar el título solo al imprimir */
-      .only-print { display: block !important; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
-    }
-  </style>
+  body { background: white; padding: 0; display: block; }
+  
+  /* Cambiamos overflow a visible para que no corte el título ni el contenido */
+  .card { 
+    box-shadow: none !important; 
+    border: none !important; 
+    width: 100% !important; 
+    max-width: 100% !important; 
+    padding: 0 !important; 
+    margin: 0 !important; 
+    overflow: visible !important; /* <--- Cambio clave */
+  }
+
+  .header-img, h2, #rutInput, button:not(.btn-print), #loader, #errorMsg, hr, #loginSection { 
+    display: none !important; 
+  }
+
+  .result-box { 
+    display: block !important; 
+    border: none !important; 
+    padding-top: 0 !important; 
+    margin-top: 0 !important; 
+    overflow: visible !important;
+  }
+  
+  /* Mostrar el título solo al imprimir con formato corregido */
+  .only-print { 
+    display: block !important; 
+    visibility: visible !important;
+    margin-bottom: 20px !important; 
+    text-transform: uppercase; 
+    border-bottom: 2px solid #2c3e50; 
+    padding-bottom: 10px;
+    text-align: center !important;
+  }
+}
+</style>
 </head>
 <body>
 
