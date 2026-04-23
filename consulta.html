@@ -40,11 +40,17 @@
     td:first-child { text-align: left; background-color: #f2f2f2; font-weight: bold; padding-left: 5px; width: 30%; }
     .col-prom { font-weight: bold; background-color: #fdf2e9; color: #d35400; border-left: 2px solid #d35400; }
 
+    /* Agregar esta regla en tu sección <style> */
+    .only-print { display: none; }
+
     @media print {
       body { background: white; padding: 0; display: block; }
       .header-img, h2, #rutInput, button:not(.btn-print), #loader, #errorMsg, hr, #loginSection { display: none !important; }
       .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
       .result-box { display: block !important; border: none; padding-top: 0; margin-top: 0; }
+      
+      /* Mostrar el título solo al imprimir */
+      .only-print { display: block !important; margin-bottom: 20px; text-transform: uppercase; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; }
     }
   </style>
 </head>
@@ -68,6 +74,7 @@
     <div id="errorMsg" class="error"></div>
 
     <div id="resultBox" class="result-box">
+      <h3 class="only-print" style="text-align: center; margin-top: 0;">Evaluación de Desempeño SCI-225</h3>
       <div class="data-item"><span class="label">Nombre Completo</span><span id="resNombre" class="value"></span></div>
       <div class="data-item"><span class="label">Cargo</span><span id="resCargo" class="value"></span></div>
       <div class="data-item"><span class="label">Brigada</span><span id="resBrigada" class="value"></span></div>
