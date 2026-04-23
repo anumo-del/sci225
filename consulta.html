@@ -49,13 +49,33 @@
     td:first-child { text-align: left; background-color: #f2f2f2; font-weight: bold; padding-left: 5px; width: 30%; }
 
     @media print {
-      body { background: white; padding: 0; display: block; }
-      /* Aseguramos que el título aparezca */
-      #tituloReporte { display: block !important; visibility: visible !important; }
-      .header-img, h2, #rutInput, button:not(.btn-print), #loader, #errorMsg, hr, #loginSection { display: none !important; }
-      .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
-      .result-box { display: block !important; border: none; padding-top: 0; margin-top: 0; }
-    }
+  /* 1. Fondo blanco y reset de padding */
+  body { background: white; padding: 0; display: block; }
+  
+  /* 2. Mostrar el título del reporte y el contenedor de resultados */
+  #tituloReporte { display: block !important; visibility: visible !important; }
+  .result-box { display: block !important; border: none; padding-top: 0; margin-top: 0; }
+
+  /* 3. OCULTAR TODO LO QUE NO DEBE IR EN EL PAPEL */
+  /* Aquí agregamos 'button' a secas para que incluya el de impresión */
+  .header-img, 
+  h2, 
+  #rutInput, 
+  button, 
+  .btn-print, 
+  #loader, 
+  #errorMsg, 
+  hr, 
+  #loginSection { 
+    display: none !important; 
+  }
+
+  /* 4. Quitar sombras y bordes de la tarjeta para que parezca un documento */
+  .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
+  }
+  /* 5. Obligar a imprimir con colores originales */
+  table { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    
   </style>
 </head>
 <body>
