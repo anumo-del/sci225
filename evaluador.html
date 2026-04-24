@@ -3,179 +3,97 @@
 <head>
   <base target="_top">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sistema de Consulta SCI-225</title>
+  <title>Sistema SCI-225 - Evaluador</title>
   
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 
   <style>
-    :root { --primary: #2c3e50; --accent: #e67e22; }
+    :root { --primary: #2c3e50; --accent: #e67e22; --blue: #3498db; }
     body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 40px; }
     
-    /* Contenedor principal */
-    .card { background: white; padding: 0 0 30px 0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; overflow: hidden; display: block !important; }
-    
+    .card { background: white; padding: 0 0 30px 0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; overflow: hidden; }
     .header-img { width: 100%; height: auto; max-height: 200px; display: block; object-fit: cover; }
-    .content-padding { padding: 20px 30px; }
+    .content-padding { padding: 30px; }
     
-    /* Control de secciones */
     #loginSection { padding: 40px 20px; display: block; }
     #appSection { display: none; }
     
-    h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; line-height: 1.2; }
-    input { width: 85%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; margin-bottom: 15px; outline: none; }
-    
-    /* Botones - Forzamos visibilidad */
-    button { 
-      display: inline-block !important; 
+    h2 { color: var(--primary); margin-bottom: 25px; font-size: 1.4rem; }
+
+    /* Estilo para los botones de navegación */
+    .btn-nav { 
+      display: block; 
+      text-decoration: none;
       background: var(--accent); 
       color: white; 
-      border: none; 
-      padding: 12px 25px; 
-      border-radius: 6px; 
-      cursor: pointer; 
+      padding: 20px; 
+      border-radius: 8px; 
       font-weight: bold; 
-      width: 92%; 
-      margin-bottom: 10px;
+      font-size: 18px;
+      margin-bottom: 20px; 
+      transition: transform 0.2s, background 0.3s;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
     
-    .btn-print { background: #7f8c8d; margin-top: 20px; width: 100%; }
-    #loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
-    
-    .result-box { margin-top: 25px; text-align: left; display: none; border-top: 2px solid #eee; padding-top: 20px; }
-    .data-item { margin-bottom: 10px; font-size: 14px; }
-    .label { font-weight: bold; color: #bd5302; text-transform: uppercase; font-size: 14px; display: block; }
-    .value { font-size: 16px; color: var(--primary); }
-
-    .table-container { width: 100%; overflow-x: auto; margin: 20px 0; border: 1px solid #ccc; border-radius: 4px; }
-    table { width: 100%; border-collapse: collapse; font-size: 10px; background: white; }
-    th, td { border: 1px solid #aaa; padding: 5px 2px; text-align: center; }
-    th { background-color: #e67e22; color: #000000; }
-    td:first-child { text-align: left; background-color: #f2f2f2; font-weight: bold; padding-left: 5px; width: 30%; }
-
-    /* Estilos de Impresión corregidos para no romper la web */
-    @media print {
-      body { background: white; padding: 0; display: block; }
-      .header-img, h2, #rutInput, button, #loader, #loginSection, hr { display: none !important; }
-      .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; }
-      .result-box { display: block !important; border: none; padding: 0; margin: 0; }
-      table { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .btn-nav:hover { 
+      background: #d35400; 
+      transform: translateY(-2px);
     }
+
+    .btn-form { 
+      background: var(--blue); 
+    }
+    
+    .btn-form:hover { 
+      background: #2980b9; 
+    }
+
   </style>
 </head>
 <body>
 
 <div class="card">
-  <img src="data:image/png;base64,TU_IMAGEN_BASE64_AQUI" alt="Logo" class="header-img"> 
+  <img src="data:image/png;base64,TU_IMAGEN_BASE64_AQUI" alt="SCI-225" class="header-img"> 
   
   <div id="loginSection">
-    <h2>Acceso al Sistema SCI-225</h2>
-    <div id="buttonDiv"></div>
+    <h2>Acceso al Sistema SCI-225 - Evaluador</h2>
+    <div id="buttonDiv" style="display: flex; justify-content: center;"></div>
   </div>
 
   <div id="appSection" class="content-padding">
-    <h2>Consulta de Evaluación Desempeño SCI-225</h2>
-    <input type="text" id="rutInput" placeholder="Ej: 12345678-9">
-    <button type="button" onclick="consultar()">BUSCAR PERSONAL</button>
-    
-    <div id="loader"></div>
+    <h2>Seleccione una opción</h2>
 
-    <div id="resultBox" class="result-box">
-      <div class="data-item"><span class="label">Nombre Completo</span><span id="resNombre" class="value"></span></div>
-      <div class="data-item"><span class="label">Cargo</span><span id="resCargo" class="value"></span></div>
-      <div class="data-item"><span class="label">Brigada</span><span id="resBrigada" class="value"></span></div>
-      <div class="data-item"><span class="label">Zona</span><span id="resZona" class="value"></span></div>
-      <div class="data-item"><span class="label">Evaluado por:</span><span id="resEvaluador" class="value"></span></div>
-      <div class="data-item"><span class="label">Cargo evaluador</span><span id="resCargoEvaluador" class="value"></span></div>
-      
-      <hr>
-      <div class="data-item"><span class="label">Resultado Final</span><span id="resResultado" class="value" style="font-weight:bold;"></span></div>
+    <a href="AQUÍ_VA_TU_LINK_DE_CONSULTA" class="btn-nav">
+      CONSULTA E IMPRESIÓN DE INFORMES
+    </a>
 
-      <div class="table-container">
-        <table>
-          <thead>
-            <tr><th>FACTOR</th><th>COMBATE</th><th>LIQUIDACIÓN</th><th>CAMPAMENTO</th><th>OTRO</th><th>PROMEDIO</th></tr>
-          </thead>
-          <tbody id="tablaMatriz"></tbody>
-        </table>
-      </div>
+    <a href="AQUÍ_VA_TU_LINK_DEL_FORMULARIO" class="btn-nav btn-form">
+      IR AL FORMULARIO DE EVALUACIÓN
+    </a>
 
-      <div class="data-item"><span class="label">Observaciones</span><span id="resObservaciones" class="value"></span></div>
-      
-      <div class="data-item">
-        <span id="resFirmaRRHH" class="value" style="font-weight: bold;"></span>
-      </div>
-
-      <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR RESULTADO</button>
-    </div>
   </div>
 </div>
 
 <script>
-  // Tu configuración de cliente y URL (No las cambies)
+  // Tu configuración de cliente (Sin cambios)
   const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwr__jY8p1Gbh0Tgyofk6PWPvwM14Wh_HgSrVilT6hC7_y0RzN1mJDVIKcdTED_9KYO/exec";
   
-  let USER_TOKEN = "";
-
   window.onload = function () {
-    google.accounts.id.initialize({ client_id: CLIENT_ID, callback: handleCredentialResponse });
-    google.accounts.id.renderButton(document.getElementById("buttonDiv"), { theme: "outline", size: "large" });
+    google.accounts.id.initialize({ 
+      client_id: CLIENT_ID, 
+      callback: handleCredentialResponse 
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("buttonDiv"), 
+      { theme: "outline", size: "large", shape: "pill" }
+    );
   };
 
   function handleCredentialResponse(response) {
-    USER_TOKEN = response.credential;
-    if (USER_TOKEN) {
+    if (response.credential) {
+      // Al validar, solo mostramos los botones
       document.getElementById('loginSection').style.display = 'none';
       document.getElementById('appSection').style.display = 'block';
-    }
-  }
-
-  async function consultar() {
-    const rut = document.getElementById('rutInput').value.trim();
-    if (!rut) return;
-    
-    document.getElementById('loader').style.display = "block";
-    document.getElementById('resultBox').style.display = "none";
-
-    try {
-      const response = await fetch(`${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}`);
-      const data = await response.json();
-      document.getElementById('loader').style.display = "none";
-
-      if (data.encontrado) {
-        document.getElementById('resNombre').innerText = data.nombre;
-        document.getElementById('resCargo').innerText = data.cargo;
-        document.getElementById('resBrigada').innerText = data.brigada;
-        document.getElementById('resZona').innerText = data.zona;
-        document.getElementById('resEvaluador').innerText = data.evaluador;
-        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
-        document.getElementById('resObservaciones').innerText = data.observaciones;
-        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
-        document.getElementById('resResultado').innerText = data.resultado;
-
-        const tbody = document.getElementById('tablaMatriz');
-        tbody.innerHTML = "";
-        const factores = ["Conocimiento del Trabajo", "Desempeño", "Actitud", "Bajo Presión", "Iniciativa", "Cuidado Personal", "Uso de Recursos", "Condición Física", "Seguridad", "Otros"];
-        
-        factores.forEach((f, i) => {
-          let row = tbody.insertRow();
-          row.insertCell(0).innerText = f;
-          row.insertCell(1).innerText = data.combate[i];
-          row.insertCell(2).innerText = data.liquidacion[i];
-          row.insertCell(3).innerText = data.campamento[i];
-          row.insertCell(4).innerText = data.otros[i];
-          let cp = row.insertCell(5);
-          cp.innerText = data.promedios[i];
-          cp.className = "col-prom";
-        });
-
-        document.getElementById('resultBox').style.display = "block";
-      } else {
-        alert(data.mensaje);
-      }
-    } catch (e) {
-      document.getElementById('loader').style.display = "none";
-      alert("Error de conexión");
     }
   }
 </script>
