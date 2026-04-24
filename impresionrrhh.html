@@ -20,7 +20,9 @@
     h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; line-height: 1.2; }
     input { width: 85%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; margin-bottom: 15px; outline: none; }
     input:focus { border-color: var(--accent); }
-    button { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 92%; transition: background 0.3s; margin-bottom: 10px;}
+    
+    /* Botones visibles en web */
+    button { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 92%; transition: background 0.3s; margin-bottom: 10px; display: inline-block; }
     button:hover { background: #d35400; }
     
     .btn-print { background: #7f8c8d; margin-top: 20px; width: 100%; }
@@ -44,39 +46,10 @@
 
     @media print {
       body { background: white; padding: 0; display: block; }
-      
-      .card { 
-        box-shadow: none !important; 
-        border: none !important; 
-        width: 100% !important; 
-        max-width: 100% !important; 
-        padding: 0 !important; 
-        margin: 0 !important; 
-        overflow: visible !important; 
-      }
-
-      /* AQUÍ ESTÁ EL CAMBIO: 'button' a secas oculta TODOS los botones al imprimir */
-      .header-img, h2, #rutInput, button, #loader, #errorMsg, hr, #loginSection { 
-        display: none !important; 
-      }
-
-      .result-box { 
-        display: block !important; 
-        border: none !important; 
-        padding-top: 0 !important; 
-        margin-top: 0 !important; 
-        overflow: visible !important;
-      }
-      
-      .only-print { 
-        display: block !important; 
-        visibility: visible !important;
-        margin-bottom: 20px !important; 
-        text-transform: uppercase; 
-        border-bottom: 2px solid #2c3e50; 
-        padding-bottom: 10px;
-        text-align: center !important;
-      }
+      .card { box-shadow: none; border: none; width: 100%; max-width: 100%; padding: 0; margin: 0; overflow: visible !important; }
+      .header-img, h2, #rutInput, button, #loader, #errorMsg, hr, #loginSection { display: none !important; }
+      .result-box { display: block !important; border: none !important; padding-top: 0 !important; margin-top: 0 !important; overflow: visible !important; }
+      .only-print { display: block !important; visibility: visible !important; margin-bottom: 20px !important; text-transform: uppercase; border-bottom: 2px solid #2c3e50; padding-bottom: 10px; text-align: center !important; }
     }
   </style>
 </head>
@@ -94,13 +67,14 @@
   <div id="appSection" class="content-padding">
     <h2>Consulta de Evaluación Desempeño SCI-225</h2>
     <input type="text" id="rutInput" placeholder="Ej: 12345678-9" maxlength="10">
-    <button type="button" onclick="consultar()">BUSCAR PERSONAL</button>
+    <button type="button" id="btnBuscar" onclick="consultar()">BUSCAR PERSONAL</button>
     
     <div id="loader"></div>
     <div id="errorMsg" class="error"></div>
 
     <div id="resultBox" class="result-box">
-      <h3 class="only-print" style="text-align: center; margin-top: 0;">Evaluación de Desempeño SCI-225</h3>
+      <h3 class="only-print">Evaluación de Desempeño SCI-225</h3>
+      
       <div class="data-item"><span class="label">Nombre Completo</span><span id="resNombre" class="value"></span></div>
       <div class="data-item"><span class="label">Cargo</span><span id="resCargo" class="value"></span></div>
       <div class="data-item"><span class="label">Brigada</span><span id="resBrigada" class="value"></span></div>
@@ -121,9 +95,25 @@
       </div>
 
       <div class="data-item"><span class="label">Observaciones</span><span id="resObservaciones" class="value"></span></div>
+      
       <div class="data-item">
-      <span class="label">Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente:</span>
-      <span id="resFirmaRRHH" class="value"></span>
+        <span class="label">Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente:</span>
+        <span id="resFirmaRRHH" class="value" style="font-weight: bold;"></span>
+      </div>
+
+      <table style="width:100%; margin-top: 30px; border: none;">
+        <tr>
+          <th style="background: none; color: black; border: none; border-top: 1px solid black; padding-top: 5px;">Firma Evaluado/a</th>
+          <th style="border: none; width: 10%;"></th>
+          <th style="background: none; color: black; border: none; border-top: 1px solid black; padding-top: 5px;">Firma Evaluador/a</th>
+        </tr>
+        <tr>
+          <td style="background: none; border: none; height: 60px;"></td>
+          <td style="border: none;"></td>
+          <td style="background: none; border: none; height: 60px;"></td>
+        </tr>
+      </table>
+
       <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR RESULTADO</button>
     </div>
   </div>
@@ -183,7 +173,6 @@
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
         document.getElementById('resObservaciones').innerText = data.observaciones;
         document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
-        document.getElementById('resFirmaRRHH').style.fontWeight = "bold";
         
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
@@ -217,18 +206,5 @@
     }
   }
 </script>
-<table style="width:100%">
-  <tr>
-    <th>Firma Evaluado/a</th>
-    <th>Firma Evaluador/a</th>
-    
-  </tr>
-  <tr>
-    <td><br><br><br><br><br><br><br></td>
-    <td><br><br><br><br><br><br><br></td>
-  </tr>
-
-</table>
-  
 </body>
 </html>
