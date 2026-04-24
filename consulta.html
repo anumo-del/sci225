@@ -182,7 +182,7 @@
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
         document.getElementById('resObservaciones').innerText = data.observaciones;
-        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH ? "Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente" : "";
+        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
         
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
