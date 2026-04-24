@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Consulta SCI-225</title>
+  
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    :root { --primary: #2c3e50; --accent: #e67e22; }
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; display: flex; justify-content: center; padding: 40px; }
+    .card { background: white; padding: 0 0 30px 0; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 100%; max-width: 550px; text-align: center; overflow: hidden; position: relative; }
+    .header-img { width: 100%; height: auto; max-height: 200px; display: block; object-fit: cover; }
+    .content-padding { padding: 20px 30px; }
+    
+    #loginSection { padding: 40px 20px; display: block; }
+    #appSection { display: none; }
+    
+    h2 { color: var(--primary); margin-bottom: 20px; font-size: 1.3rem; line-height: 1.2; }
+    input { width: 85%; padding: 12px; border: 2px solid #ddd; border-radius: 6px; font-size: 16px; margin-bottom: 15px; outline: none; }
+    input:focus { border-color: var(--accent); }
+    button { background: var(--accent); color: white; border: none; padding: 12px 25px; border-radius: 6px; cursor: pointer; font-weight: bold; width: 92%; transition: background 0.3s; margin-bottom: 10px;}
+    button:hover { background: #d35400; }
+    
+    .btn-print { background: #7f8c8d; margin-top: 20px; width: 100%; }
+    #loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--accent); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    .result-box { margin-top: 25px; text-align: left; display: none; border-top: 2px solid #eee; padding-top: 20px; }
+    .data-item { margin-bottom: 10px; font-size: 14px; }
+    .label { font-weight: bold; color: #bd5302; text-transform: uppercase; font-size: 14px; display: block; }
+    .value { font-size: 16px; color: var(--primary); }
+    .error { color: #e74c3c; font-weight: bold; margin-top: 20px; display: none; }
+
+    .table-container { width: 100%; overflow-x: auto; margin: 20px 0; border: 1px solid #ccc; border-radius: 4px; }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; background: white; }
+    th, td { border: 1px solid #aaa; padding: 5px 2px; text-align: center; }
+    th { background-color: #e67e22; color: #000000; font-size: 9px; }
+    td:first-child { text-align: left; background-color: #f2f2f2; font-weight: bold; padding-left: 5px; width: 30%; }
+    .col-prom { font-weight: bold; background-color: #fdf2e9; color: #d35400; border-left: 2px solid #d35400; }
+
+    .only-print { display: none; }
+
+    @media print {
+      body { background: white; padding: 0; display: block; }
+      
+      .card { 
+        box-shadow: none !important; 
+        border: none !important; 
+        width: 100% !important; 
+        max-width: 100% !important; 
+        padding: 0 !important; 
+        margin: 0 !important; 
+        overflow: visible !important; 
+      }
+
+      /* AQUÍ ESTÁ EL CAMBIO: 'button' a secas oculta TODOS los botones al imprimir */
+      .header-img, h2, #rutInput, button, #loader, #errorMsg, hr, #loginSection { 
+        display: none !important; 
+      }
+
+      .result-box { 
+        display: block !important; 
+        border: none !important; 
+        padding-top: 0 !important; 
+        margin-top: 0 !important; 
+        overflow: visible !important;
+      }
+      
+      .only-print { 
+        display: block !important; 
+        visibility: visible !important;
+        margin-bottom: 20px !important; 
+        text-transform: uppercase; 
+        border-bottom: 2px solid #2c3e50; 
+        padding-bottom: 10px;
+        text-align: center !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <img src="data:image/png;base64,TU_IMAGEN_AQUI" alt="Evaluación Desempeño SCI-225" class="header-img"> 
+  
+  <div id="loginSection">
+    <h2>Acceso al Sistema SCI-225</h2>
+    <p style="font-size: 14px; color: #666; margin-bottom: 20px;">Inicie sesión con su correo @conaf.cl para consultar evaluaciones.</p>
+    <div id="buttonDiv" style="display: flex; justify-content: center;"></div>
+  </div>
+
+  <div id="appSection" class="content-padding">
+    <h2>Consulta de Evaluación Desempeño SCI-225</h2>
+    <input type="text" id="rutInput" placeholder="Ej: 12345678-9" maxlength="10">
+    <button type="button" onclick="consultar()">BUSCAR PERSONAL</button>
+    
+    <div id="loader"></div>
+    <div id="errorMsg" class="error"></div>
+
+    <div id="resultBox" class="result-box">
+      <h3 class="only-print" style="text-align: center; margin-top: 0;">Evaluación de Desempeño SCI-225</h3>
+      <div class="data-item"><span class="label">Nombre Completo</span><span id="resNombre" class="value"></span></div>
+      <div class="data-item"><span class="label">Cargo</span><span id="resCargo" class="value"></span></div>
+      <div class="data-item"><span class="label">Brigada</span><span id="resBrigada" class="value"></span></div>
+      <div class="data-item"><span class="label">Zona</span><span id="resZona" class="value"></span></div>
+      <div class="data-item"><span class="label">Evaluado por: </span><span id="resEvaluador" class="value"></span></div>
+      <div class="data-item"><span class="label">Cargo evaluador</span><span id="resCargoEvaluador" class="value"></span></div>
+      
+      <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
+      <div class="data-item"><span class="label">Resultado Final</span><span id="resResultado" class="value" style="font-weight:bold;"></span></div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr><th>FACTOR</th><th>COMBATE</th><th>LIQUIDACIÓN</th><th>CAMPAMENTO</th><th>OTRO</th><th>PROMEDIO</th></tr>
+          </thead>
+          <tbody id="tablaMatriz"></tbody>
+        </table>
+      </div>
+
+      <div class="data-item"><span class="label">Observaciones</span><span id="resObservaciones" class="value"></span></div>
+      <div class="data-item">
+      <span class="label">Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente:</span>
+      <span id="resFirmaRRHH" class="value"></span>
+      <button type="button" class="btn-print" onclick="window.print()">IMPRIMIR RESULTADO</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwr__jY8p1Gbh0Tgyofk6PWPvwM14Wh_HgSrVilT6hC7_y0RzN1mJDVIKcdTED_9KYO/exec";
+  
+  let USER_TOKEN = "";
+
+  window.onload = function () {
+    google.accounts.id.initialize({
+      client_id: CLIENT_ID,
+      callback: handleCredentialResponse,
+      auto_select: true 
+    });
+    google.accounts.id.renderButton(
+      document.getElementById("buttonDiv"),
+      { theme: "outline", size: "large", text: "signin_with", shape: "pill" } 
+    );
+    google.accounts.id.prompt(); 
+  };
+
+  function handleCredentialResponse(response) {
+    USER_TOKEN = response.credential;
+    if (USER_TOKEN) {
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('appSection').style.display = 'block';
+    }
+  }
+
+  async function consultar() {
+    const rut = document.getElementById('rutInput').value.trim();
+    const loader = document.getElementById('loader');
+    const resultBox = document.getElementById('resultBox');
+    const errorMsg = document.getElementById('errorMsg');
+
+    if (rut.length < 8) { alert("RUT no válido"); return; }
+    
+    loader.style.display = "block";
+    resultBox.style.display = "none";
+    errorMsg.style.display = "none";
+
+    try {
+      const urlFinal = `${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}`;
+      const response = await fetch(urlFinal, { method: 'GET', mode: 'cors' });
+      const data = await response.json();
+      loader.style.display = "none";
+
+      if (data.encontrado) {
+        document.getElementById('resNombre').innerText = data.nombre;
+        document.getElementById('resCargo').innerText = data.cargo;
+        document.getElementById('resBrigada').innerText = data.brigada;
+        document.getElementById('resZona').innerText = data.zona; 
+        document.getElementById('resEvaluador').innerText = data.evaluador;
+        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
+        document.getElementById('resObservaciones').innerText = data.observaciones;
+        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
+        document.getElementById('resFirmaRRHH').style.fontWeight = "bold";
+        
+        var elResultado = document.getElementById('resResultado');
+        elResultado.innerText = data.resultado;
+        elResultado.style.color = data.resultado.toLowerCase().includes("aprobado") ? "#27ae60" : "#e74c3c";
+
+        const factores = ["Conocimiento del Trabajo", "Desempeño", "Actitud", "Bajo Presión", "Iniciativa", "Cuidado Personal", "Uso de Recursos", "Condición Física", "Seguridad", "Otros"];
+        const tbody = document.getElementById('tablaMatriz');
+        tbody.innerHTML = "";
+
+        factores.forEach((nombre, i) => {
+          let row = tbody.insertRow();
+          row.insertCell(0).innerText = nombre;
+          row.insertCell(1).innerText = data.combate[i];
+          row.insertCell(2).innerText = data.liquidacion[i];
+          row.insertCell(3).innerText = data.campamento[i];
+          row.insertCell(4).innerText = data.otros[i];
+          let cellProm = row.insertCell(5);
+          cellProm.innerText = data.promedios[i];
+          cellProm.className = "col-prom";
+        });
+
+        resultBox.style.display = "block";
+      } else {
+        errorMsg.innerText = data.mensaje;
+        errorMsg.style.display = "block";
+      }
+    } catch (e) {
+      loader.style.display = "none";
+      errorMsg.innerText = "Error: No se pudo conectar.";
+      errorMsg.style.display = "block";
+    }
+  }
+</script>
+</body>
+</html>
