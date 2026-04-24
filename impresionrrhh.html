@@ -65,7 +65,7 @@
   </div>
 
   <div id="appSection" class="content-padding">
-    <h2>Consulta de Evaluación Desempeño SCI-225</h2>
+    <h2>Impresión de Evaluación Desempeño SCI-225</h2>
     <input type="text" id="rutInput" placeholder="Ej: 12345678-9" maxlength="10">
     <button type="button" id="btnBuscar" onclick="consultar()">BUSCAR PERSONAL</button>
     
@@ -103,9 +103,9 @@
           <th style="background: none; color: black; border: none; border-top: 1px solid black; padding-top: 5px;">Firma Evaluador/a</th>
         </tr>
         <tr>
-          <td style="background: none; border: none; height: 60px;"></td>
+          <td style="background: none; border: none; height: 100px;"></td>
           <td style="border: none;"></td>
-          <td style="background: none; border: none; height: 60px;"></td>
+          <td style="background: none; border: none; height: 100px;"></td>
         </tr>
       </table>
 
@@ -167,8 +167,7 @@
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
         document.getElementById('resObservaciones').innerText = data.observaciones;
-        document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
-        
+                
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
         elResultado.style.color = data.resultado.toLowerCase().includes("aprobado") ? "#27ae60" : "#e74c3c";
