@@ -131,7 +131,7 @@
 
 <script>
   const CLIENT_ID = "624446664490-0h9hc0eq09bssftqe2m02mp1oigqiad5.apps.googleusercontent.com";
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwr__jY8p1Gbh0Tgyofk6PWPvwM14Wh_HgSrVilT6hC7_y0RzN1mJDVIKcdTED_9KYO/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyF5ryIlbk595CEWQi4NNDlZ8HHG4zRdqku5-q_yVpWCRK-ZDCQKfeoObYMQR-GzCDD/exec";
   
   let USER_TOKEN = "";
 
@@ -181,6 +181,8 @@
         document.getElementById('resZona').innerText = data.zona; 
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
+        document.getElementById('resCargoEvaluador').innerText = data.mes;
+        document.getElementById('resCargoEvaluador').innerText = data.periodo;
         document.getElementById('resObservaciones').innerText = data.observaciones;
         document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
         document.getElementById('resFirmaRRHH').style.fontWeight = "bold";
