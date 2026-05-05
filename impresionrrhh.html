@@ -165,8 +165,10 @@
         document.getElementById('resZona').innerText = data.zona; 
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
+        document.getElementById('resCargoEvaluador').innerText = data.mes;
+        document.getElementById('resCargoEvaluador').innerText = data.periodo;
         document.getElementById('resObservaciones').innerText = data.observaciones;
-                
+        
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
         elResultado.style.color = data.resultado.toLowerCase().includes("aprobado") ? "#27ae60" : "#e74c3c";
