@@ -81,7 +81,8 @@
       <div class="data-item"><span class="label">Zona</span><span id="resZona" class="value"></span></div>
       <div class="data-item"><span class="label">Evaluado por: </span><span id="resEvaluador" class="value"></span></div>
       <div class="data-item"><span class="label">Cargo evaluador</span><span id="resCargoEvaluador" class="value"></span></div>
-      
+      <div class="data-item"><span class="label">Mes</span><span id="resMes" class="value"></span><span class="label">Período</span><span id="resPeriodo" class="value"></span></div>
+            
       <hr style="border: 0; border-top: 1px solid #eee; margin: 10px 0;">
       <div class="data-item"><span class="label">Resultado Final</span><span id="resResultado" class="value" style="font-weight:bold;"></span></div>
 
@@ -165,8 +166,8 @@
         document.getElementById('resZona').innerText = data.zona; 
         document.getElementById('resEvaluador').innerText = data.evaluador;
         document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
-        document.getElementById('resCargoEvaluador').innerText = data.mes;
-        document.getElementById('resCargoEvaluador').innerText = data.periodo;
+        document.getElementById('resMes').innerText = data.mes;
+        document.getElementById('resPeriodo').innerText = data.periodo;
         document.getElementById('resObservaciones').innerText = data.observaciones;
         
         var elResultado = document.getElementById('resResultado');
