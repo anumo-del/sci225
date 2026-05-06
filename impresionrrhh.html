@@ -159,17 +159,30 @@
       const data = await response.json();
       loader.style.display = "none";
           
-      if (data.encontrado) {
+if (data.encontrado) {
         document.getElementById('resNombre').innerText = data.nombre;
         document.getElementById('resCargo').innerText = data.cargo;
         document.getElementById('resBrigada').innerText = data.brigada;
         document.getElementById('resZona').innerText = data.zona; 
         document.getElementById('resEvaluador').innerText = data.evaluador;
-        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
-        document.getElementById('resMes').innerText = data.mes;
-        document.getElementById('resPeriodo').innerText = data.periodo;
+        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador || "No especificado";
+
+        // --- LÓGICA DE VALIDACIÓN PARA MES ---
+        let valorMes = data.mes;
+        if (!valorMes || valorMes === "3 veces por temporada") {
+            valorMes = "No aplica";
+        }
+        document.getElementById('resMes').innerText = valorMes;
+
+        // --- LÓGICA DE VALIDACIÓN PARA PERÍODO ---
+        let valorPeriodo = data.periodo;
+        if (!valorPeriodo || valorPeriodo.toString().trim() === "") {
+            valorPeriodo = "No aplica";
+        }
+        document.getElementById('resPeriodo').innerText = valorPeriodo;
         document.getElementById('resObservaciones').innerText = data.observaciones;
-        
+
+  
         var elResultado = document.getElementById('resResultado');
         elResultado.innerText = data.resultado;
         elResultado.style.color = data.resultado.toLowerCase().includes("aprobado") ? "#27ae60" : "#e74c3c";
