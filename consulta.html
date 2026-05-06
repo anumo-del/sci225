@@ -107,7 +107,6 @@
       <div class="data-item"><span class="label">Zona</span><span id="resZona" class="value"></span></div>
       <div class="data-item"><span class="label">Evaluado por: </span><span id="resEvaluador" class="value"></span></div>
       <div class="data-item"><span class="label">Cargo evaluador</span><span id="resCargoEvaluador" class="value"></span></div>
-      </div>
       <div style="display: flex; gap: 20px;">
       <div class="data-item" style="flex: 1;">
         <span class="label">Mes de Evaluación</span>
@@ -191,9 +190,20 @@
         document.getElementById('resBrigada').innerText = data.brigada;
         document.getElementById('resZona').innerText = data.zona; 
         document.getElementById('resEvaluador').innerText = data.evaluador;
-        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador;
-        document.getElementById('resCargoEvaluador').innerText = data.mes;
-        document.getElementById('resCargoEvaluador').innerText = data.periodo;
+        document.getElementById('resCargoEvaluador').innerText = data.cargoEvaluador || "No especificado";
+        // Lógica para el Mes (con filtro "3 veces por temporada")
+        let valorMes = data.mes;
+        if (!valorMes || valorMes === "3 veces por temporada") {
+            valorMes = "No aplica";
+        }
+        document.getElementById('resMes').innerText = valorMes;
+
+        // Lógica para el Período (si está vacío)
+        let valorPeriodo = data.periodo;
+        if (!valorPeriodo || valorPeriodo.toString().trim() === "") {
+            valorPeriodo = "No aplica";
+        }
+        document.getElementById('resPeriodo').innerText = valorPeriodo;
         document.getElementById('resObservaciones').innerText = data.observaciones;
         document.getElementById('resFirmaRRHH').innerText = data.firmaRRHH || "";
         document.getElementById('resFirmaRRHH').style.fontWeight = "bold";
