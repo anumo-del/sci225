@@ -145,10 +145,11 @@ async function consultar() {
     if (data.encontrado && data.historial) {
       document.getElementById('resNombre').innerText = data.nombre;
 
+// 1. GENERAR CASILLAS DE ESTADO Y TABLAS
       data.historial.forEach((eval, index) => {
         const esAprobado = eval.resultado.toLowerCase().includes("aprobado");
         
-        // 1. Casilla de Estado Superior
+        // Crear Casilla de Estado Superior
         const caja = document.createElement('div');
         caja.style = `border: 2px solid ${esAprobado ? '#27ae60' : '#e74c3c'}; border-radius: 8px; padding: 10px; text-align: center; min-width: 110px; background: white;`;
         caja.innerHTML = `
@@ -157,7 +158,12 @@ async function consultar() {
         `;
         contenedorEstados.appendChild(caja);
 
-        // 2. Bloque Completo por Período
+        let valorDB = (eval.firmaRRHH || "").toString().trim().toLowerCase();
+        let firmaContenido = (valorDB === "sí" || valorDB === "si") 
+            ? `<span style="color:#27ae60; font-weight:bold;">✓ SÍ</span>` 
+            : `<span style="color:#e74c3c; font-weight:bold;">✗ NO</span>`;
+
+        // Crear Bloque Completo por Período
         const evalBlock = document.createElement('div');
         evalBlock.className = "eval-block";
         evalBlock.innerHTML = `
@@ -184,12 +190,17 @@ async function consultar() {
           </div>
           
           <div class="data-item"><span class="label">Observaciones:</span><span class="value" style="font-style:italic;">${eval.observaciones || "Sin observaciones."}</span></div>
-          ${eval.firmaRRHH ? `<div class="data-item" style="margin-top:10px; text-align:right;"><span class="value" style="font-weight:bold; color:#2c3e50;">✓ ${eval.firmaRRHH}</span></div>` : ''}
+          
+          <div style="margin-top:15px; padding: 10px; background: #f4f7f6; border-radius: 4px; border: 1px solid #ddd;">
+            <span style="font-size: 11px; color: #2c3e50;">
+              Esta evaluación está firmada por el/la evaluado/a y almacenada en RRHH de la región correspondiente: 
+              ${firmaContenido}
+            </span>
+          </div>
         `;
         contenedorTablas.appendChild(evalBlock);
-      });
+      }); 
 
-      // 3. GENERAR GRÁFICO AGRUPADO
       const ctx = document.getElementById('graficoEvolucion').getContext('2d');
       const colores = ['#e67e22', '#2c3e50', '#27ae60', '#e74c3c', '#9b59b6'];
       
