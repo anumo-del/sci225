@@ -169,9 +169,10 @@
     errorMsg.style.display = "none";
 
     try {
-      const urlFinal = `${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}`;
-      const response = await fetch(urlFinal, { method: 'GET', mode: 'cors' });
-      const data = await response.json();
+    const urlFinal = `${WEB_APP_URL}?rut=${encodeURIComponent(rut)}&token=${USER_TOKEN}&cb=${new Date().getTime()}`;
+    
+    const response = await fetch(urlFinal, { method: 'GET', mode: 'cors' });
+    const data = await response.json();
       loader.style.display = "none";
 
       if (data.encontrado) {
