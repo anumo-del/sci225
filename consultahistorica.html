@@ -150,6 +150,7 @@ async function consultar() {
       data.historial.forEach((eval, index) => {
         const esAprobado = eval.resultado.toLowerCase().includes("aprobado");
         
+        // 1. Casilla de Estado Superior
         const caja = document.createElement('div');
         caja.style = `border: 2px solid ${esAprobado ? '#27ae60' : '#e74c3c'}; border-radius: 8px; padding: 10px; text-align: center; min-width: 110px; background: white;`;
         caja.innerHTML = `
@@ -163,6 +164,7 @@ async function consultar() {
             ? `<span style="color:#27ae60; font-weight:bold;">✓ SÍ</span>` 
             : `<span style="color:#e74c3c; font-weight:bold;">✗ NO</span>`;
 
+        // 2. Crear Bloque Completo por Período
         const evalBlock = document.createElement('div');
         evalBlock.className = "eval-block";
         evalBlock.innerHTML = `
@@ -172,9 +174,9 @@ async function consultar() {
           </div>
 
           <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px;">
-             <div class="data-item"><span class="label">Cargo Evaluado:</span><span class="value">${data.cargo || 'No especificado'}</span></div>
-             <div class="data-item"><span class="label">Brigada:</span><span class="value">${data.brigada || 'No especificada'}</span></div>
-             <div class="data-item"><span class="label">Zona:</span><span class="value">${data.zona || 'No especificada'}</span></div>
+             <div class="data-item"><span class="label">Cargo Evaluado:</span><span class="value">${eval.cargo || 'No especificado'}</span></div>
+             <div class="data-item"><span class="label">Brigada:</span><span class="value">${eval.brigada || 'No especificada'}</span></div>
+             <div class="data-item"><span class="label">Zona:</span><span class="value">${eval.zona || 'No especificada'}</span></div>
              <div class="data-item"><span class="label">Evaluado por:</span><span class="value">${eval.evaluador || 'No especificado'}</span></div>
              <div class="data-item" style="grid-column: span 2;"><span class="label">Cargo Evaluador:</span><span class="value">${eval.cargoEvaluador || 'No especificado'}</span></div>
           </div>
@@ -206,8 +208,6 @@ async function consultar() {
       const colores = ['#e67e22', '#2c3e50', '#27ae60', '#e74c3c', '#9b59b6'];
       
       if (window.miGrafico) window.miGrafico.destroy();
-      
-      // Se registra el plugin de etiquetas de datos
       Chart.register(ChartDataLabels);
 
       window.miGrafico = new Chart(ctx, {
@@ -224,7 +224,6 @@ async function consultar() {
           responsive: true, 
           plugins: { 
             legend: { position: 'bottom' },
-            // Configuración para mostrar valores sobre las columnas
             datalabels: {
               anchor: 'end',
               align: 'top',
@@ -235,7 +234,7 @@ async function consultar() {
           scales: { 
             y: { 
               beginAtZero: true, 
-              suggestedMax: 4, // Valor máximo sugerido del eje Y
+              suggestedMax: 4,
               ticks: { stepSize: 1 } 
             } 
           } 
